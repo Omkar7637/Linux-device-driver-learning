@@ -104,4 +104,29 @@ static struct file_operations fops =
     .read = dev_read, 
     .write = dev_write, 
     .release = dev_release,
+};
+
+// Module load function
+static int __init char_init(void)
+{
+    /*
+        register_chardev
+        Registers your driver with kernal
+        0 means:
+        "Kernal please dynamically assign major number"
+    */
+   major = register_chrdev(0, DEVICE_NAME, &fops);
+
+   printk(KERN_INFO "Omkar Device registered with major number %d\n", major);
+
+   return 0;
 }
+
+// Module unload function
+static void __exit char_exit(void)
+{
+    unregister_chrdev(major, DEVICE_NAME);
+    printk(KERN_INFO "Omkar Device: unregistered\n");
+}
+
+module_init
