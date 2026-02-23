@@ -1,0 +1,1 @@
+cmd_/home/omkar/kernel_dev/Linux-device-driver-learning/hello_driver.ko := ld -r -EL  -maarch64elf -z noexecstack --build-id=sha1  -T scripts/module.lds -o /home/omkar/kernel_dev/Linux-device-driver-learning/hello_driver.ko /home/omkar/kernel_dev/Linux-device-driver-learning/hello_driver.o /home/omkar/kernel_dev/Linux-device-driver-learning/hello_driver.mod.o;  true

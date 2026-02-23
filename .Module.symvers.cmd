@@ -1,0 +1,1 @@
+cmd_/home/omkar/kernel_dev/Linux-device-driver-learning/Module.symvers := sed 's/\.ko$$/\.o/' /home/omkar/kernel_dev/Linux-device-driver-learning/modules.order | scripts/mod/modpost -m   -o /home/omkar/kernel_dev/Linux-device-driver-learning/Module.symvers -e -i Module.symvers   -T -
