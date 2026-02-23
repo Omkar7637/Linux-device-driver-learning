@@ -1,0 +1,1 @@
+#include <linux/module.h> // Required for all kernal modules
