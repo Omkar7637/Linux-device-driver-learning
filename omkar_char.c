@@ -58,6 +58,26 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
 
    if(error_count == 0)
    {
-    printk(KERN_INFO "Omkar Device: Sent %d charachters ")
+        printk(KERN_INFO "Omkar Device: Sent %d charachters to user\n", message_size);
+        return message_size; // Number of bytes sent to user
    }
+   else
+   {
+    printk(KERN_INFO "Omkar Device: Failed to send\n");
+    return -EFAULT; // bad memory access
+   }
+}
+
+/*
+    Called when user does:
+        write(fd, buffer, len);
+
+    user send data to kernal
+*/
+static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, loff_t *offset)
+{
+    sprintf(message, %s, buffer);
+    message_size = strlen(message);
+
+    printk(KERN_INFO "Omkar Device: Recived %zu char")
 }
