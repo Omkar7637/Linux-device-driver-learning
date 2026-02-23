@@ -79,5 +79,29 @@ static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, lof
     sprintf(message, %s, buffer);
     message_size = strlen(message);
 
-    printk(KERN_INFO "Omkar Device: Recived %zu char")
+    printk(KERN_INFO "Omkar Device: Recived %zu characters from user\n", len);
+    return len;
+}
+
+// Called when user does: 
+//      close(fd);
+
+static int dev_release(struct inode *inodep, struct file *filep)
+{
+    printk(KERN_INFO "Omkar Device: Closed\n");
+    return 0;
+}
+
+/*
+    This structure CONNECTS system calles to functions
+    WHen user calls read() -> Kernal calls dev_read()
+    when user calls write() -> kernal calls dev_write()
+*/
+
+static struct file_operations fops = 
+{
+    .open = dev_open, 
+    .read = dev_read, 
+    .write = dev_write, 
+    .release = dev_release,
 }
