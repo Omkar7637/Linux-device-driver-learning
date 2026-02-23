@@ -1,1 +1,0 @@
-cmd_/home/omkar/kernel_dev/Linux-device-driver-learning/hello_driver.mod := printf '%s\n'   hello_driver.o | awk '!x[$$0]++ { print("/home/omkar/kernel_dev/Linux-device-driver-learning/"$$0) }' > /home/omkar/kernel_dev/Linux-device-driver-learning/hello_driver.mod

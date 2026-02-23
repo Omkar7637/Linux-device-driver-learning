@@ -2,6 +2,9 @@
 #include <linux/kernel.h>   // printk()
 #include <linux/fs.h>       // file_operations structure 
 #include <linux/uaccess.h>   // copy_to_user() and cpoy_from_user()
+#include <linux/string.h>
+#include <linux/init.h>
+#include <linux/device.h>
 
 // Name of the device taht will appera in /proc/devices
 #define DEVICE_NAME "Omkar_Device"
@@ -47,25 +50,21 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
 {
     int error_count;
 
-    /*
-        Very important function
-        You cannot access directly access user memory in kernal.
-        that wold crash the system.
-        so kernal provides safe API:
-        copy_tp_user(destination_user, source_kernal, size)
-    */
-   error_count = copy_to_user(buffer, message, message_size);
+    if (*offset >= message_size)
+        return 0;
 
-   if(error_count == 0)
-   {
-        printk(KERN_INFO "Omkar Device: Sent %d charachters to user\n", message_size);
-        return message_size; // Number of bytes sent to user
-   }
-   else
-   {
-    printk(KERN_INFO "Omkar Device: Failed to send\n");
-    return -EFAULT; // bad memory access
-   }
+    error_count = copy_to_user(buffer, message, message_size);
+
+    if(error_count == 0)
+    {
+        *offset = message_size;
+        printk(KERN_INFO "Omkar Device: Sent %d characters\n", message_size);
+        return message_size;
+    }
+    else
+    {
+        return -EFAULT;
+    }
 }
 
 /*
@@ -76,10 +75,19 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
 */
 static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, loff_t *offset)
 {
-    sprintf(message, "%s", buffer);
-    message_size = strlen(message);
+    if(len > 255)
+        len = 255;
 
-    printk(KERN_INFO "Omkar Device: Recived %zu characters from user\n", len);
+    if(copy_from_user(message, buffer, len) != 0)
+    {
+        printk(KERN_INFO "Omkar Device: Failed to receive data\n");
+        return -EFAULT;
+    }
+
+    message[len] = '\0';
+    message_size = len;
+
+    printk(KERN_INFO "Omkar Device: Received %zu characters from user\n", len);
     return len;
 }
 
