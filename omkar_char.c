@@ -17,7 +17,7 @@ static int major;
 static char message[256] = "Hello from kernal!";
 
 // Size of valid data inside message []
-static shirt message_size;
+static short message_size;
 
 /*
     Called when user does:
@@ -37,5 +37,27 @@ static int dev_open(struct inode *inodep, struct file *filep)
     Called when user does:
         read(fd, buffer, len);
     
-    filep -> 
+    filep   -> file structure
+    buffer  -> USER SPACE buffer (IMPORTANT!!!)
+    len     -> how many bytes user wants
+    offset  -> File position pointer
 */
+
+static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *offset)
+{
+    int error_count;
+
+    /*
+        Very important function
+        You cannot access directly access user memory in kernal.
+        that wold crash the system.
+        so kernal provides safe API:
+        copy_tp_user(destination_user, source_kernal, size)
+    */
+   error_count = copy_to_user(buffer, message, message_size);
+
+   if(error_count == 0)
+   {
+    printk(KERN_INFO "Omkar Device: Sent %d charachters ")
+   }
+}
