@@ -1,0 +1,22 @@
+obj-m += hello_driver.o
+
+KDIR := /lib/modules/$(shell uname -r)/build
+PWD  := $(shell pwd)
+MODDEST := /lib/modules/$(shell uname -r)/extra
+
+all:
+$(MAKE) -C $(KDIR) M=$(PWD) modules
+
+clean:
+$(MAKE) -C $(KDIR) M=$(PWD) clean
+
+install:
+sudo mkdir -p $(MODDEST)
+sudo cp hello_driver.ko $(MODDEST)
+sudo depmod -a
+sudo modprobe hello_driver
+
+uninstall:
+sudo modprobe -r hello_driver
+sudo rm -f $(MODDEST)/hello_driver.ko
+sudo depmod -a
