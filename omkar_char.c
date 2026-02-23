@@ -13,4 +13,29 @@
 // Kernal uses this number to know which driver to call
 static int major;
 
-// 
+// Kernal Buffer - This lives in KERNAL SPACE (NOT accessiable directly by user program)
+static char message[256] = "Hello from kernal!";
+
+// Size of valid data inside message []
+static shirt message_size;
+
+/*
+    Called when user does:
+        Open("/dev/Omkar_device")
+
+    inodep  -> Information about device file
+    filep   -> file instanece created by kernal
+*/
+
+static int dev_open(struct inode *inodep, struct file *filep)
+{
+    printk(KERN_INFO "Omkar Device: Opened\n");
+    return 0;
+}
+
+/*
+    Called when user does:
+        read(fd, buffer, len);
+    
+    filep -> 
+*/
