@@ -1,0 +1,1 @@
+cmd_/home/omkar/kernel_dev/Linux-device-driver-learning/omkar_char.ko := ld -r -EL  -maarch64elf -z noexecstack --build-id=sha1  -T scripts/module.lds -o /home/omkar/kernel_dev/Linux-device-driver-learning/omkar_char.ko /home/omkar/kernel_dev/Linux-device-driver-learning/omkar_char.o /home/omkar/kernel_dev/Linux-device-driver-learning/omkar_char.mod.o;  true

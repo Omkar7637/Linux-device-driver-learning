@@ -1,1 +1,1 @@
-cmd_/home/omkar/kernel_dev/Linux-device-driver-learning/modules.order := {   echo /home/omkar/kernel_dev/Linux-device-driver-learning/hello_driver.ko; :; } | awk '!x[$$0]++' - > /home/omkar/kernel_dev/Linux-device-driver-learning/modules.order
+cmd_/home/omkar/kernel_dev/Linux-device-driver-learning/modules.order := {   echo /home/omkar/kernel_dev/Linux-device-driver-learning/omkar_char.ko; :; } | awk '!x[$$0]++' - > /home/omkar/kernel_dev/Linux-device-driver-learning/modules.order

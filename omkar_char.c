@@ -1,7 +1,7 @@
 #include <linux/module.h>   // Required for all kernal modules
 #include <linux/kernel.h>   // printk()
 #include <linux/fs.h>       // file_operations structure 
-#include <linux/access.h>   // copy_to_user() and cpoy_from_user()
+#include <linux/uaccess.h>   // copy_to_user() and cpoy_from_user()
 
 // Name of the device taht will appera in /proc/devices
 #define DEVICE_NAME "Omkar_Device"
@@ -76,7 +76,7 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
 */
 static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, loff_t *offset)
 {
-    sprintf(message, %s, buffer);
+    sprintf(message, "%s", buffer);
     message_size = strlen(message);
 
     printk(KERN_INFO "Omkar Device: Recived %zu characters from user\n", len);
@@ -129,4 +129,9 @@ static void __exit char_exit(void)
     printk(KERN_INFO "Omkar Device: unregistered\n");
 }
 
-module_init
+module_init(char_init);
+module_exit(char_exit);
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Omkar Kashid");
+MODULE_DESCRIPTION("Simple character Driver");

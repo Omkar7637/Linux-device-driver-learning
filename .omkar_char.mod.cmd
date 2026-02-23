@@ -1,0 +1,1 @@
+cmd_/home/omkar/kernel_dev/Linux-device-driver-learning/omkar_char.mod := printf '%s\n'   omkar_char.o | awk '!x[$$0]++ { print("/home/omkar/kernel_dev/Linux-device-driver-learning/"$$0) }' > /home/omkar/kernel_dev/Linux-device-driver-learning/omkar_char.mod
