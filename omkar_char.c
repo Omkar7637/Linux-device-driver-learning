@@ -147,6 +147,7 @@ static ssize_t dev_write(   struct file *filep,
     Triggered by:
         close(fd);
 */
+
 static int dev_release(struct inode *inodep, struct file *filep)
 {
     printk(KERN_INFO "Omkar Device: Closed\n");
@@ -157,6 +158,7 @@ static int dev_release(struct inode *inodep, struct file *filep)
     File Operations structure
     Maps system calles to driver functions
 */
+
 static struct file_operations fops = 
 {
     .open = dev_open, 
@@ -164,6 +166,16 @@ static struct file_operations fops =
     .write = dev_write, 
     .release = dev_release,
 };
+
+/*----------------------------------------------------------------------*/
+/*                      MODULE INITIALIZATION                           */
+/*----------------------------------------------------------------------*/
+
+/*
+    char_init - module load function
+
+    Registers the character device, creates
+*/
 
 // Module load function
 static int __init char_init(void)
