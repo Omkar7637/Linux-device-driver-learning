@@ -1,3 +1,22 @@
+/*
+    omkar_char.c
+    
+    A Simple Linux Character Device Driver
+    
+    This driver demonstrates communication between user space and 
+    kernal space using a character device.The device allows a user
+    application to open, read, write and close a device file located
+    in /dev/Omkar_Device.
+
+    The driver automatically creates the device node using the 
+    Linux device model (Class_create + create_create) and does not
+    require manual mknod.
+
+    Author  :   Omkar 
+
+*/
+
+
 #include <linux/module.h>   // Required for all kernal modules
 #include <linux/kernel.h>   // printk()
 #include <linux/fs.h>       // file_operations structure 
