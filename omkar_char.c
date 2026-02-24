@@ -1,7 +1,7 @@
 #include <linux/module.h>   // Required for all kernal modules
 #include <linux/kernel.h>   // printk()
 #include <linux/fs.h>       // file_operations structure 
-#include <linux/uaccess.h>   // copy_to_user() and cpoy_from_user()
+#include <linux/uaccess.h>  // copy_to_user() and cpoy_from_user()
 #include <linux/string.h>
 #include <linux/init.h>
 #include <linux/device.h>
