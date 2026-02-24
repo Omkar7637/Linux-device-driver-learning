@@ -84,9 +84,9 @@ static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, lof
     message[len] = '\0';
     message_size = len;
 
-        printk(KERN_INFO "Omkar Device: Received %zu characters from user\n", len);
-        return len;
-    }
+    printk(KERN_INFO "Omkar Device: Received %zu characters from user\n", len);
+    return len;
+}
 
 // Called when user does: 
 //      close(fd);
