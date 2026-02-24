@@ -36,14 +36,16 @@ static int major;
 
 /*
     Kernal buffer
-    Stores data recived from user space and later
-
+    Stores data recived from user space and later returned on read()
+    This memory resides in kernal space and cannot be accessed directly
+    by user application.
 */
 static char message[256] = "Hello from kernal!";
 
-// Size of valid data inside message []
+// Tracks numbe of valid bytes currently stored in message[]
 static short message_size;
 
+// Device class and device structure pointers (Linux device model)
 static struct class*  omkarClass  = NULL;
 static struct device* omkarDevice = NULL;
 
