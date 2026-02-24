@@ -49,14 +49,20 @@ static short message_size;
 static struct class*  omkarClass  = NULL;
 static struct device* omkarDevice = NULL;
 
+/*----------------------------------------------------------------------*/
+/*                          FILE OPERATIONS                             */
+/*----------------------------------------------------------------------*/
+
 /*
-    Called when user does:
-        Open("/dev/Omkar_device")
+    dev_open - callled when user application opens the device file 
+    Triggered by:
+        open("/dev/Omkar_Device", ORDWR);
 
-    inodep  -> Information about device file
-    filep   -> file instanece created by kernal
+    @inodep :   Pointer to inode structure representing device file metadata
+    @filep  :   Pointer to file structure representing opened instance
+
+    Return  :   0 on success
 */
-
 static int dev_open(struct inode *inodep, struct file *filep)
 {
     printk(KERN_INFO "Omkar Device: Opened\n");
@@ -64,13 +70,15 @@ static int dev_open(struct inode *inodep, struct file *filep)
 }
 
 /*
-    Called when user does:
-        read(fd, buffer, len);
+    dev_read - transfer data from kernal to user space
+
+    Triggered by:
+        read(fd, buffer, length);
+
+    @filep  :   Pointer to file structure
+    @buffer :   User-Space buffer (must use copy_to_user)
+    @len    :   Number of bytes requested by user
     
-    filep   -> file structure
-    buffer  -> USER SPACE buffer (IMPORTANT!!!)
-    len     -> how many bytes user wants
-    offset  -> File position pointer
 */
 
 static ssize_t dev_read(struct file *filep, char __user *buffer, size_t len, loff_t *offset)
