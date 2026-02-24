@@ -78,10 +78,18 @@ static int dev_open(struct inode *inodep, struct file *filep)
     @filep  :   Pointer to file structure
     @buffer :   User-Space buffer (must use copy_to_user)
     @len    :   Number of bytes requested by user
-    
+    @offset :   Current file position pointer
+
+    Return  :
+        >0  :   number of bytes read
+        0   :   End of file
+        <0  :   error code
 */
 
-static ssize_t dev_read(struct file *filep, char __user *buffer, size_t len, loff_t *offset)
+static ssize_t dev_read(struct file *filep,
+                        char __user *buffer,
+                        size_t len,
+                        loff_t *offset)
 {
     int bytes_to_copy;
 
@@ -100,10 +108,16 @@ static ssize_t dev_read(struct file *filep, char __user *buffer, size_t len, lof
 }
 
 /*
-    Called when user does:
-        write(fd, buffer, len);
+    dev_write - recivies data from user sapce
 
-    user send data to kernal
+    Triggered by:
+        write(fd, buffer, length);
+        echo "hello" > /dev/Omkar_Device
+
+    @filep  :   File structure
+    @buffer :   User-space buffer (must NOT be accessed directly)
+    @len    :   Number of bytes written
+    @offset :   File 
 */
 static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, loff_t *offset)
 {
