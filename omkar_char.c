@@ -12,30 +12,33 @@
     Linux device model (Class_create + create_create) and does not
     require manual mknod.
 
-    Author  :   Omkar 
-
+    Author  :   Omkar Kashid
+    License :   GPL
 */
 
 
-#include <linux/module.h>   // Required for all kernal modules
+#include <linux/module.h>   // Core header for loading LKMs
 #include <linux/kernel.h>   // printk()
-#include <linux/fs.h>       // file_operations structure 
+#include <linux/fs.h>       // file_operations, register_chrdev 
 #include <linux/uaccess.h>  // copy_to_user() and cpoy_from_user()
-#include <linux/string.h>
-#include <linux/init.h>
-#include <linux/device.h>
+#include <linux/string.h>   // strlen, memset
+#include <linux/init.h>     // __init, __exit macros
+#include <linux/device.h>   // class_create, device_create
 
-// Name of the device taht will appera in /proc/devices
+// Device name visible in /dev and /proc/devices
 #define DEVICE_NAME "Omkar_Device"
 
-// Class Name (Normally used when auto-creating /dev node via udev, not fully used here)
+// Device class name visible in /sys/class
 #define CLASS_NAME "Omkar_Class"
 
-// Major number = ID given by kernal to your driver
-// Kernal uses this number to know which driver to call
+// Major number assigned by kernal during registration
 static int major;
 
-// Kernal Buffer - This lives in KERNAL SPACE (NOT accessiable directly by user program)
+/*
+    Kernal buffer
+    Stores data recived from user space and later
+
+*/
 static char message[256] = "Hello from kernal!";
 
 // Size of valid data inside message []
