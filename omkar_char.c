@@ -22,6 +22,9 @@ static char message[256] = "Hello from kernal!";
 // Size of valid data inside message []
 static short message_size;
 
+static struct class*  omkarClass  = NULL;
+static struct device* omkarDevice = NULL;
+
 /*
     Called when user does:
         Open("/dev/Omkar_device")
@@ -46,25 +49,22 @@ static int dev_open(struct inode *inodep, struct file *filep)
     offset  -> File position pointer
 */
 
-static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *offset)
+static ssize_t dev_read(struct file *filep, char __user *buffer, size_t len, loff_t *offset)
 {
-    int error_count;
+    int bytes_to_copy;
 
     if (*offset >= message_size)
         return 0;
 
-    error_count = copy_to_user(buffer, message, message_size);
+    bytes_to_copy = min(len, (size_t)(message_size - *offset));
 
-    if(error_count == 0)
-    {
-        *offset = message_size;
-        printk(KERN_INFO "Omkar Device: Sent %d characters\n", message_size);
-        return message_size;
-    }
-    else
-    {
+    if (copy_to_user(buffer, message + *offset, bytes_to_copy))
         return -EFAULT;
-    }
+
+    *offset += bytes_to_copy;
+
+    printk(KERN_INFO "Omkar Device: sent %d bytes\n", bytes_to_copy);
+    return bytes_to_copy;
 }
 
 /*
@@ -75,21 +75,18 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
 */
 static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, loff_t *offset)
 {
-    if(len > 255)
-        len = 255;
+    if (len > sizeof(message) - 1)
+        len = sizeof(message) - 1;
 
-    if(copy_from_user(message, buffer, len) != 0)
-    {
-        printk(KERN_INFO "Omkar Device: Failed to receive data\n");
+    if (copy_from_user(message, buffer, len))
         return -EFAULT;
-    }
 
     message[len] = '\0';
     message_size = len;
 
-    printk(KERN_INFO "Omkar Device: Received %zu characters from user\n", len);
-    return len;
-}
+        printk(KERN_INFO "Omkar Device: Received %zu characters from user\n", len);
+        return len;
+    }
 
 // Called when user does: 
 //      close(fd);
@@ -117,28 +114,39 @@ static struct file_operations fops =
 // Module load function
 static int __init char_init(void)
 {
-    /*
-        register_chardev
-        Registers your driver with kernal
-        0 means:
-        "Kernal please dynamically assign major number"
-    */
-   major = register_chrdev(0, DEVICE_NAME, &fops);
-
-    if (major < 0) 
-    {
-        printk(KERN_ALERT "Failed to register character device\n");
+    major = register_chrdev(0, DEVICE_NAME, &fops);
+    if (major < 0) {
+        printk(KERN_ALERT "Omkar: failed to register major\n");
         return major;
     }
 
-   return 0;
+    omkarClass = class_create(THIS_MODULE, CLASS_NAME);
+    if (IS_ERR(omkarClass)) {
+        unregister_chrdev(major, DEVICE_NAME);
+        printk(KERN_ALERT "Failed to register device class\n");
+        return PTR_ERR(omkarClass);
+    }
+
+    omkarDevice = device_create(omkarClass, NULL, MKDEV(major, 0), NULL, DEVICE_NAME);
+    if (IS_ERR(omkarDevice)) {
+        class_destroy(omkarClass);
+        unregister_chrdev(major, DEVICE_NAME);
+        printk(KERN_ALERT "Failed to create device\n");
+        return PTR_ERR(omkarDevice);
+    }
+
+    printk(KERN_INFO "Omkar Device: created correctly\n");
+    return 0;
 }
 
 // Module unload function
 static void __exit char_exit(void)
 {
+    device_destroy(omkarClass, MKDEV(major, 0));
+    class_unregister(omkarClass);
+    class_destroy(omkarClass);
     unregister_chrdev(major, DEVICE_NAME);
-    printk(KERN_INFO "Omkar Device: unregistered\n");
+    printk(KERN_INFO "Omkar Device: removed\n");
 }
 
 module_init(char_init);
