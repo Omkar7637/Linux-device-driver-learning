@@ -125,7 +125,11 @@ static int __init char_init(void)
     */
    major = register_chrdev(0, DEVICE_NAME, &fops);
 
-   printk(KERN_INFO "Omkar Device registered with major number %d\n", major);
+    if (major < 0) 
+    {
+        printk(KERN_ALERT "Failed to register character device\n");
+        return major;
+    }
 
    return 0;
 }
