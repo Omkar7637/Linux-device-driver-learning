@@ -117,9 +117,16 @@ static ssize_t dev_read(struct file *filep,
     @filep  :   File structure
     @buffer :   User-space buffer (must NOT be accessed directly)
     @len    :   Number of bytes written
-    @offset :   File 
+    @offset :   File offset pointer
+
+    Return  :   
+        Number of bytes written on success
+        Negative error code on failure
 */
-static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, loff_t *offset)
+static ssize_t dev_write(   struct file *filep,
+                            const char *buffer,
+                            size_t len,
+                            loff_t *offset)
 {
     if (len > sizeof(message) - 1)
         len = sizeof(message) - 1;
@@ -134,9 +141,12 @@ static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, lof
     return len;
 }
 
-// Called when user does: 
-//      close(fd);
+/*  
+    dev_release - called when the device file is closed
 
+    Triggered by:
+        close(fd);
+*/
 static int dev_release(struct inode *inodep, struct file *filep)
 {
     printk(KERN_INFO "Omkar Device: Closed\n");
@@ -144,11 +154,9 @@ static int dev_release(struct inode *inodep, struct file *filep)
 }
 
 /*
-    This structure CONNECTS system calles to functions
-    WHen user calls read() -> Kernal calls dev_read()
-    when user calls write() -> kernal calls dev_write()
+    File Operations structure
+    Maps system calles to driver functions
 */
-
 static struct file_operations fops = 
 {
     .open = dev_open, 
